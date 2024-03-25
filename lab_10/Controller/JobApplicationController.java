@@ -30,16 +30,19 @@ public class JobApplicationController {
 
     @PostMapping("/add")
     public ResponseEntity addJopApplication(@RequestBody @Valid JobApplication jobApplication , Errors errors){
+       String x = jobApplicationService.addJobApplication(jobApplication);
         if (errors.hasErrors()){
             String message = errors.getFieldError().getDefaultMessage();
             return ResponseEntity.status(400).body(message);
         }
-        if (jobApplicationService.addJobApplication(jobApplication) == null) {
-            return ResponseEntity.status(400).body(new ApiResponse("Invalid Id"));
+        if (x.equalsIgnoreCase("job post not found")) {
+            return ResponseEntity.status(400).body(new ApiResponse("job post not found"));
+        } else if (x.equalsIgnoreCase("user not found")) {
+            return ResponseEntity.status(400).body(new ApiResponse("job post not found"));
         }
 
         jobApplicationService.addJobApplication( jobApplication);
-        return ResponseEntity.status(200).body(new ApiResponse("job application added"));
+        return ResponseEntity.status(200).body(new ApiResponse("job added"));
 
     }
 
@@ -47,11 +50,10 @@ public class JobApplicationController {
 
     @DeleteMapping("/delete/{Id}")
     public ResponseEntity deleteJobApplication(@PathVariable Integer Id){
-        if (jobApplicationService.deleteJobApplication(Id) == null){
-            return ResponseEntity.status(400).body(new ApiResponse("Invalid Id"));
+        if (jobApplicationService.deleteJobApplication(Id)){
+            return ResponseEntity.status(200).body(new ApiResponse("job application deleted"));
         }
-
-        return ResponseEntity.status(200).body(new ApiResponse("job application deleted"));
+        return ResponseEntity.status(400).body(new ApiResponse("Invalid Id"));
 
     }
 

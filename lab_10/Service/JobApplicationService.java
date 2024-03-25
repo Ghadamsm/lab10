@@ -26,13 +26,18 @@ public class JobApplicationService {
     }
 
 
-    public Boolean addJobApplication(JobApplication jobApplication ){
+    public String addJobApplication(JobApplication jobApplication ){
 
-        if (userRepository.existsById(jobApplication.getUserId()) && jobPostRepository.existsById(jobApplication.getJobPostId())) {
-            jobApplicationRepository.save(jobApplication);
-            return true ;
+        if (userRepository.existsById(jobApplication.getUserId())){
+            if (jobPostRepository.existsById(jobApplication.getJobPostId())) {
+                  jobApplicationRepository.save(jobApplication);
+                  return "job added";
+            } else {
+                return "job post not found";
+            }
+        } else {
+            return "user not found";
         }
-        return null ;
     }
 
 
@@ -42,7 +47,7 @@ public class JobApplicationService {
             jobApplicationRepository.deleteById(Id);
             return true;
         }
-        return null ;
+        return false;
     }
 
 }
